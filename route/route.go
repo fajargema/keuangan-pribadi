@@ -38,5 +38,13 @@ func New() *echo.Echo {
 	eJwt.PUT("/categories/:id", category.Update)
 	eJwt.DELETE("/categories/:id", category.Delete)
 
+	finance := controllers.InitFinanceController()
+	eJwt.GET("/finances", finance.GetAll)
+	eJwt.GET("/finances/:id", finance.GetByID)
+	eJwt.GET("/finances/search", finance.Search)
+	eJwt.POST("/finances", finance.Create)
+	eJwt.PUT("/finances/:id", finance.Update)
+	eJwt.DELETE("/finances/:id", finance.Delete)
+
 	return e
 }
