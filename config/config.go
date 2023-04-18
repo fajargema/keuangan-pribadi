@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"keuangan-pribadi/models"
 	"keuangan-pribadi/utils"
 	"log"
 
@@ -45,7 +46,7 @@ func InitDB() {
 }
 
 func InitMigrate() {
-	//
+	DB.AutoMigrate(&models.User{})
 }
 
 func CloseDB() error {
