@@ -31,5 +31,12 @@ func New() *echo.Echo {
 	eJwt.GET("/users/:email", user.GetByEmail)
 	eJwt.PUT("/users", user.UpdateMe)
 
+	category := controllers.InitCategoryController()
+	eJwt.GET("/categories", category.GetAll)
+	eJwt.GET("/categories/:id", category.GetByID)
+	eJwt.POST("/categories", category.Create)
+	eJwt.PUT("/categories/:id", category.Update)
+	eJwt.DELETE("/categories/:id", category.Delete)
+
 	return e
 }
