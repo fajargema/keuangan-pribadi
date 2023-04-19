@@ -46,5 +46,12 @@ func New() *echo.Echo {
 	eJwt.PUT("/finances/:id", finance.Update)
 	eJwt.DELETE("/finances/:id", finance.Delete)
 
+	saving := controllers.InitSavingController()
+	eJwt.GET("/savings", saving.GetAll)
+	eJwt.GET("/savings/:id", saving.GetByID)
+	eJwt.POST("/savings", saving.Create)
+	eJwt.PUT("/savings/:id", saving.Update)
+	eJwt.DELETE("/savings/:id", saving.Delete)
+
 	return e
 }
