@@ -46,7 +46,7 @@ func InitDB() {
 }
 
 func InitMigrate() {
-	DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Finance{})
+	DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Finance{}, &models.Saving{})
 }
 
 func CloseDB() error {

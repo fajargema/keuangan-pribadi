@@ -28,3 +28,11 @@ type FinanceRepository interface {
 	Update(FinanceInput models.FinanceInput, id, token string) (models.Finance, error)
 	Delete(id, token string) error
 }
+
+type SavingRepository interface {
+	GetAll(token string) ([]models.Saving, error)
+	GetByID(id, token string) (models.Saving, error)
+	Create(SavingInput models.SavingInput, token string) (models.Saving, error)
+	Update(SavingUpdate models.SavingUpdate, id, token string) (models.Saving, error)
+	Delete(id, token string) error
+}
