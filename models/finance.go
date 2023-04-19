@@ -9,7 +9,7 @@ import (
 type Finance struct {
 	ID        	uint           	`json:"id" gorm:"primaryKey"`
 	Name     	string 			`json:"name" form:"name"`
-	Type		string 			`json:"type" form:"type"`
+	Type		int 			`json:"type" form:"type" gorm:"check:type IN(1,2)"`
 	Money		int 			`json:"money" form:"money"`
 	UserID 		uint 			`json:"user_id" form:"user_id"`
 	CategoryID 	uint 			`json:"category_id" form:"category_id"`
@@ -22,7 +22,7 @@ type Finance struct {
 
 type FinanceInput struct {
 	Name		string 	`json:"name" form:"name" validate:"required"`
-	Type    	string 	`json:"type" form:"type" validate:"required"`
+	Type    	int 	`json:"type" form:"type" validate:"required"`
 	Money    	int 	`json:"money" form:"money" validate:"required"`
 	UserID 		uint 	`json:"user_id" form:"user_id"`
 	CategoryID 	uint 	`json:"category_id" form:"category_id" validate:"required"`

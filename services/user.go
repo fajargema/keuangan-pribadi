@@ -27,6 +27,6 @@ func (us *UserService) Login(userInput models.UserAuth) (models.UserResponse, er
 	return us.repository.Login(userInput)
 }
 
-func (us *UserService) UpdateMe(userInput models.UserInput, token string) (models.User, error) {
-	return us.repository.UpdateMe(userInput, token)
+func (us *UserService) Update(userInput models.UserInput, token string) (models.User, error) {
+	return us.repository.Update(userInput, token)
 }
