@@ -81,7 +81,7 @@ func (ur *UserRepositoryImpl) Login(userInput models.UserAuth) (models.UserRespo
 	return userResponse, nil
 }
 
-func (ur *UserRepositoryImpl) UpdateMe(userInput models.UserInput, token string) (models.User, error) {
+func (ur *UserRepositoryImpl) Update(userInput models.UserInput, token string) (models.User, error) {
 	user, err := m.VerifyToken(token)
     if err != nil {
         return models.User{}, err
