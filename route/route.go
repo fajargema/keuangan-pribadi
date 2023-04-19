@@ -29,7 +29,7 @@ func New() *echo.Echo {
 	v1.POST("/users/login", user.Login)
 	v1.POST("/users/register", user.Register)
 	eJwt.GET("/users/:email", user.GetByEmail)
-	eJwt.PUT("/users", user.UpdateMe)
+	eJwt.PUT("/users", user.Update)
 
 	return e
 }
