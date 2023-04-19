@@ -9,7 +9,7 @@ type UserRepository interface {
 	Register(UserInput models.UserInput) (models.User, error)
 	GetByEmail(email string) (models.User, error)
 	Login(UserInput models.UserAuth) (models.UserResponse, error)
-	UpdateMe(UserInput models.UserInput, token string) (models.User, error)
+	Update(UserInput models.UserInput, token string) (models.User, error)
 }
 
 type CategoryRepository interface {
@@ -26,5 +26,13 @@ type FinanceRepository interface {
 	Search(from, to time.Time, token string) ([]models.Finance, error)
 	Create(FinanceInput models.FinanceInput, token string) (models.Finance, error)
 	Update(FinanceInput models.FinanceInput, id, token string) (models.Finance, error)
+	Delete(id, token string) error
+}
+
+type SavingRepository interface {
+	GetAll(token string) ([]models.Saving, error)
+	GetByID(id, token string) (models.Saving, error)
+	Create(SavingInput models.SavingInput, token string) (models.Saving, error)
+	Update(SavingUpdate models.SavingUpdate, id, token string) (models.Saving, error)
 	Delete(id, token string) error
 }

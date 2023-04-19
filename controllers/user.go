@@ -95,7 +95,7 @@ func (uc *UserController) Login(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusUnauthorized, models.Response[string]{
 			Status:  "failed",
-			Message: "authentication failed",
+			Message: "authentication failed, invalid Email or Password",
 		})
 	}
 
@@ -106,7 +106,7 @@ func (uc *UserController) Login(c echo.Context) error {
 	})
 }
 
-func (uc *UserController) UpdateMe(c echo.Context) error {
+func (uc *UserController) Update(c echo.Context) error {
 	token := c.Request().Header.Get("Authorization")
     if token == "" {
         return c.JSON(http.StatusBadRequest, models.Response[string]{
@@ -133,7 +133,7 @@ func (uc *UserController) UpdateMe(c echo.Context) error {
 		})
     }
 
-	user, err := uc.service.UpdateMe(userInput, token)
+	user, err := uc.service.Update(userInput, token)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, models.Response[string]{

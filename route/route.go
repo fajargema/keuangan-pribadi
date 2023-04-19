@@ -29,7 +29,7 @@ func New() *echo.Echo {
 	v1.POST("/users/login", user.Login)
 	v1.POST("/users/register", user.Register)
 	eJwt.GET("/users/:email", user.GetByEmail)
-	eJwt.PUT("/users", user.UpdateMe)
+	eJwt.PUT("/users", user.Update)
 
 	category := controllers.InitCategoryController()
 	eJwt.GET("/categories", category.GetAll)
@@ -45,6 +45,13 @@ func New() *echo.Echo {
 	eJwt.POST("/finances", finance.Create)
 	eJwt.PUT("/finances/:id", finance.Update)
 	eJwt.DELETE("/finances/:id", finance.Delete)
+
+	saving := controllers.InitSavingController()
+	eJwt.GET("/savings", saving.GetAll)
+	eJwt.GET("/savings/:id", saving.GetByID)
+	eJwt.POST("/savings", saving.Create)
+	eJwt.PUT("/savings/:id", saving.Update)
+	eJwt.DELETE("/savings/:id", saving.Delete)
 
 	return e
 }
