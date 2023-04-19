@@ -36,3 +36,11 @@ type SavingRepository interface {
 	Update(SavingUpdate models.SavingUpdate, id, token string) (models.Saving, error)
 	Delete(id, token string) error
 }
+
+type DetailSavingRepository interface {
+	GetAll(token string) ([]models.DetailSaving, error)
+	GetByID(id, token string) (models.DetailSaving, error)
+	Create(SavingInput models.DetailSavingInput, token string) (models.DetailSaving, error)
+	Update(SavingInput models.DetailSavingInput, id, token string) (models.DetailSaving, error)
+	Delete(id, token string) error
+}
