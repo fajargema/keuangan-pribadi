@@ -6,6 +6,7 @@ import (
 	"keuangan-pribadi/utils"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -47,6 +48,31 @@ func InitDB() {
 
 func InitMigrate() {
 	DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Finance{}, &models.Saving{}, &models.DetailSaving{})
+}
+
+func SeedUser() (models.User, error) {
+	password, err := bcrypt.GenerateFromPassword([]byte("testsecret"), bcrypt.DefaultCost)
+	if err != nil {
+		return models.User{}, err
+	}
+
+	var user models.User = models.User{
+		Name: "test",
+		Email: "test@gmail.com",
+		Password: string(password),
+	}
+
+	result := DB.Create(&user)
+
+	if err := result.Error; err != nil {
+		return models.User{}, err
+	}
+
+	if err := result.Last(&user).Error; err != nil {
+		return models.User{}, err
+	}
+
+	return user, nil
 }
 
 func SeedCategory() (models.Category, error) {
