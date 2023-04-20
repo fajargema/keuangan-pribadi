@@ -22,9 +22,11 @@ type SavingInput struct {
 	Name     	string 	`json:"name" form:"name" validate:"required"`
 	Value     	int 	`json:"value" form:"value"`
 	Goal     	int 	`json:"goal" form:"goal" validate:"required"`
+	UserID 		uint 	`json:"user_id" form:"user_id"`
 }
 
 type SavingUpdate struct {
 	Name     	string 	`json:"name" form:"name" validate:"required"`
 	Goal     	int 	`json:"goal" form:"goal" validate:"required"`
+	UserID 		uint 	`json:"user_id" form:"user_id"`
 }

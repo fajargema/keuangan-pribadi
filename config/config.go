@@ -127,6 +127,33 @@ func SeedFinance() (models.Finance, error) {
 	return finance, nil
 }
 
+func SeedSaving() (models.Saving, error) {
+	user, err := SeedUser()
+	if err != nil {
+		return models.Saving{}, err
+	}
+
+	var saving models.Saving = models.Saving{
+		Name:       	"test",
+		Value: 			1,
+		Goal: 			10000,
+		UserID:  		user.ID,
+		User:       	user,
+	}
+
+	result := DB.Create(&saving)
+
+	if err := result.Error; err != nil {
+		return models.Saving{}, err
+	}
+
+	if err := result.Last(&saving).Error; err != nil {
+		return models.Saving{}, err
+	}
+
+	return saving, nil
+}
+
 func CloseDB() error {
 	database, err := DB.DB()
 
