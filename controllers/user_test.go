@@ -3,7 +3,9 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"keuangan-pribadi/config"
+	"keuangan-pribadi/middleware"
 	"keuangan-pribadi/models"
 	"net/http"
 	"net/http/httptest"
@@ -173,48 +175,6 @@ func TestGetUserByEmail_Failed(t *testing.T) {
 	}
 }
 
-func TestUpdateUserByEmail_Success(t *testing.T) {
-	testcase := testCaseUser{
-		name:                   "success",
-		path:                   "/api/v1/users",
-		expectedStatus:         http.StatusOK,
-		expectedBodyStartsWith: "{\"status\":",
-	}
-
-	e := InitEcho()
-
-	password, _ := bcrypt.GenerateFromPassword([]byte("passupdate"), bcrypt.DefaultCost)
-
-	userInput := models.UserInput{
-		Name:      "updated",
-		Email:    "updated@gmail.com",
-		Password: string(password),
-	}
-
-	jsonBody, _ := json.Marshal(&userInput)
-	bodyReader := bytes.NewReader(jsonBody)
-
-	req := httptest.NewRequest(http.MethodPut, "/api/v1/users", bodyReader)
-	rec := httptest.NewRecorder()
-
-	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer <token>")
-
-	c := e.NewContext(req, rec)
-
-	token := "Bearer my-token"
-	c.Request().Header.Set("Authorization", token)
-
-	c.SetPath(testcase.path)
-
-	if assert.NoError(t, controller.Update(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-		body := rec.Body.String()
-
-		assert.True(t, strings.HasPrefix(body, testcase.expectedBodyStartsWith))
-	}
-}
-
 func TestLoginUser_Success(t *testing.T) {
 	testcase := testCaseUser{
 		name:                   "success",
@@ -286,6 +246,88 @@ func TestLoginUser_Failed(t *testing.T) {
 	if assert.NoError(t, controller.Login(ctx)) {
 		assert.Equal(t, http.StatusBadRequest, recorder.Code)
 		body := recorder.Body.String()
+
+		assert.True(t, strings.HasPrefix(body, testcase.expectedBodyStartsWith))
+	}
+}
+
+func TestUpdateUser_Success(t *testing.T) {
+	testcase := testCaseUser{
+		name:                   "success",
+		path:                   "/api/v1/users",
+		expectedStatus:         http.StatusOK,
+		expectedBodyStartsWith: "{\"status\":",
+	}
+
+	e := InitEcho()
+
+	user, _ := config.SeedUser()
+	token, _ := middleware.CreateToken(user.ID, user.Name)
+	tokenString := fmt.Sprintf("Bearer %s", token)
+
+	password, _ := bcrypt.GenerateFromPassword([]byte("passupdate"), bcrypt.DefaultCost)
+
+	userInput := models.UserInput{
+		Name:      "updated",
+		Email:     "updated@gmail.com",
+		Password:  string(password),
+	}
+
+	jsonBody, _ := json.Marshal(&userInput)
+	bodyReader := bytes.NewReader(jsonBody)
+
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/users", bodyReader)
+	rec := httptest.NewRecorder()
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", tokenString)
+
+	c := e.NewContext(req, rec)
+
+	c.SetPath(testcase.path)
+
+	if assert.NoError(t, controller.Update(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		body := rec.Body.String()
+
+		assert.True(t, strings.HasPrefix(body, testcase.expectedBodyStartsWith))
+	}
+}
+
+func TestUpdateUser_Failed(t *testing.T) {
+	testcase := testCaseUser{
+		name:                   "failed",
+		path:                   "/api/v1/users",
+		expectedStatus:         http.StatusBadRequest,
+		expectedBodyStartsWith: "{\"status\":",
+	}
+
+	e := InitEcho()
+
+	password, _ := bcrypt.GenerateFromPassword([]byte("passupdate"), bcrypt.DefaultCost)
+
+	userInput := models.UserInput{
+		Name:      "updated",
+		Email:     "updated@gmail.com",
+		Password:  string(password),
+	}
+
+	jsonBody, _ := json.Marshal(&userInput)
+	bodyReader := bytes.NewReader(jsonBody)
+
+	req := httptest.NewRequest(http.MethodPut, "/api/v1/users", bodyReader)
+	rec := httptest.NewRecorder()
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "")
+
+	c := e.NewContext(req, rec)
+
+	c.SetPath(testcase.path)
+
+	if assert.NoError(t, controller.Update(c)) {
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+		body := rec.Body.String()
 
 		assert.True(t, strings.HasPrefix(body, testcase.expectedBodyStartsWith))
 	}

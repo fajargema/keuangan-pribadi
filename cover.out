@@ -154,10 +154,10 @@ keuangan-pribadi/controllers/user.go:95.16,100.3 1 1
 keuangan-pribadi/controllers/user.go:102.2,106.4 1 0
 keuangan-pribadi/controllers/user.go:109.56,111.20 2 1
 keuangan-pribadi/controllers/user.go:111.20,116.6 1 1
-keuangan-pribadi/controllers/user.go:117.2,121.43 3 0
+keuangan-pribadi/controllers/user.go:117.2,121.43 3 1
 keuangan-pribadi/controllers/user.go:121.43,126.3 1 0
-keuangan-pribadi/controllers/user.go:128.2,129.54 2 0
+keuangan-pribadi/controllers/user.go:128.2,129.54 2 1
 keuangan-pribadi/controllers/user.go:129.54,134.6 1 0
-keuangan-pribadi/controllers/user.go:136.2,138.16 2 0
+keuangan-pribadi/controllers/user.go:136.2,138.16 2 1
 keuangan-pribadi/controllers/user.go:138.16,143.3 1 0
-keuangan-pribadi/controllers/user.go:145.2,149.4 1 0
+keuangan-pribadi/controllers/user.go:145.2,149.4 1 1
