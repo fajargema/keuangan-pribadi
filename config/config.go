@@ -49,6 +49,24 @@ func InitMigrate() {
 	DB.AutoMigrate(&models.User{}, &models.Category{}, &models.Finance{}, &models.Saving{}, &models.DetailSaving{})
 }
 
+func SeedCategory() (models.Category, error) {
+	var category models.Category = models.Category{
+		Name: "seederform",
+	}
+
+	result := DB.Create(&category)
+
+	if err := result.Error; err != nil {
+		return models.Category{}, err
+	}
+
+	if err := result.Last(&category).Error; err != nil {
+		return models.Category{}, err
+	}
+
+	return category, nil
+}
+
 func CloseDB() error {
 	database, err := DB.DB()
 
