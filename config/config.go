@@ -93,6 +93,40 @@ func SeedCategory() (models.Category, error) {
 	return category, nil
 }
 
+func SeedFinance() (models.Finance, error) {
+	user, err := SeedUser()
+	if err != nil {
+		return models.Finance{}, err
+	}
+
+	category, err := SeedCategory()
+	if err != nil {
+		return models.Finance{}, err
+	}
+
+	var finance models.Finance = models.Finance{
+		Name:       	"test",
+		Type: 			1,
+		Money: 			10000,
+		UserID:  		user.ID,
+		CategoryID:  	category.ID,
+		User:       	user,
+		Category:       category,
+	}
+
+	result := DB.Create(&finance)
+
+	if err := result.Error; err != nil {
+		return models.Finance{}, err
+	}
+
+	if err := result.Last(&finance).Error; err != nil {
+		return models.Finance{}, err
+	}
+
+	return finance, nil
+}
+
 func CloseDB() error {
 	database, err := DB.DB()
 
