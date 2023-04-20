@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"keuangan-pribadi/config"
 	m "keuangan-pribadi/middleware"
 	"keuangan-pribadi/models"
@@ -60,6 +61,27 @@ func (dsr *DetailSavingRepositoryImpl) Create(savingInput models.DetailSavingInp
 
 	total := Saving.Value + savingInput.Value
 	if err := config.DB.Model(&Saving).Update("value", total).Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
+	if total >= Saving.Goal {
+		exp := 10 + User.Exp
+		if User.Exp == exp {
+			exp := exp
+			fmt.Println("ini exp:", exp)
+			if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+				return models.DetailSaving{}, err
+			}
+		} else if User.Exp < exp {
+			exp := User.Exp
+			fmt.Println("ini user.exp:", exp)
+			if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+				return models.DetailSaving{}, err
+			}
+		}
+	}
+	
+	if err := config.DB.Preload("User").Where("id = ?", savingInput.SavingID).First(&Saving).Error; err != nil {
 		return models.DetailSaving{}, err
 	}
 
