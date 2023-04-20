@@ -154,6 +154,38 @@ func SeedSaving() (models.Saving, error) {
 	return saving, nil
 }
 
+func SeedDetailSaving() (models.DetailSaving, error) {
+	user, err := SeedUser()
+	if err != nil {
+		return models.DetailSaving{}, err
+	}
+
+	saving, err := SeedSaving()
+	if err != nil {
+		return models.DetailSaving{}, err
+	}
+
+	var detailSaving models.DetailSaving = models.DetailSaving{
+		Value: 			1,
+		SavingID: 			saving.ID,
+		UserID:  		user.ID,
+		User:       	user,
+		Saving:       	saving,
+	}
+
+	result := DB.Create(&detailSaving)
+
+	if err := result.Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
+	if err := result.Last(&detailSaving).Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
+	return detailSaving, nil
+}
+
 func CloseDB() error {
 	database, err := DB.DB()
 
