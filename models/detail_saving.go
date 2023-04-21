@@ -21,4 +21,5 @@ type DetailSaving struct {
 type DetailSavingInput struct {
 	Value     	int 	`json:"value" form:"value" validate:"required"`
 	SavingID    uint 	`json:"saving_id" form:"saving_id" validate:"required"`
+	UserID 		uint 	`json:"user_id" form:"user_id"`
 }
