@@ -1,0 +1,22 @@
+name: Deploy Finance Reports
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: pull-test-deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd go-calc
+            git pull origin master
+            cd utils
+            sed -i '/viper\.SetConfigFile(".env")/s|\.env|../.env|' utils.go
+            go test -v ./...
+            sed -i 's/viper\.SetConfigFile("\.\.\/\.env")/viper.SetConfigFile(".env")/' utils.go
+            cd ../
+            docker-compose down && docker-compose up --build -d
