@@ -9,6 +9,7 @@ import (
 type DetailSaving struct {
 	ID        	uint           	`json:"id" gorm:"primaryKey"`
 	Value     	int 		 	`json:"value" form:"value"`
+	Status     	int8 		 	`json:"status" form:"status" gorm:"check:status IN(1,2)"`
 	SavingID 	uint 			`json:"saving_id" form:"saving_id"`
 	Saving   	Saving 			`gorm:"foreignKey:SavingID"`
 	UserID 		uint 			`json:"user_id" form:"user_id"`

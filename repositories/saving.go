@@ -72,6 +72,23 @@ func (sr *SavingRepositoryImpl) Create(savingInput models.SavingInput, token str
 		return models.Saving{}, err
 	}
 
+	var createdDetailSaving models.DetailSaving = models.DetailSaving{
+		Value: 			savingInput.Value,
+		Status: 		1,
+		UserID:    		user.ID,
+		User: 			User,
+		SavingID: 		createdSaving.ID,
+		Saving: 		createdSaving,
+	}
+
+	if err := config.DB.Create(&createdDetailSaving).Error; err != nil{
+		return models.Saving{}, err
+	}
+
+	if err := config.DB.Last(&createdDetailSaving).Error; err != nil {
+		return models.Saving{}, err
+	}
+
 	return createdSaving, nil
 }
 
