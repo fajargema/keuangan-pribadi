@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  echo-notes-service:
+  finance-reports-service:
     build: .
     ports:
       - 1323:1323
