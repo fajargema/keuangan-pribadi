@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"keuangan-pribadi/config"
 	m "keuangan-pribadi/middleware"
 	"keuangan-pribadi/models"
@@ -59,25 +58,23 @@ func (dsr *DetailSavingRepositoryImpl) Create(savingInput models.DetailSavingInp
 		return models.DetailSaving{}, err
 	}
 
+	var DetailSaving models.DetailSaving
+	if err := config.DB.Preload("User").Preload("Saving").Where("saving_id = ?", savingInput.SavingID).First(&DetailSaving).Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
 	total := Saving.Value + savingInput.Value
 	if err := config.DB.Model(&Saving).Update("value", total).Error; err != nil {
 		return models.DetailSaving{}, err
 	}
 
-	if total >= Saving.Goal {
+	if total >= Saving.Goal && DetailSaving.Status == 1 {
 		exp := 10 + User.Exp
-		if User.Exp == exp {
-			exp := exp
-			fmt.Println("ini exp:", exp)
-			if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
-				return models.DetailSaving{}, err
-			}
-		} else if User.Exp < exp {
-			exp := User.Exp
-			fmt.Println("ini user.exp:", exp)
-			if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
-				return models.DetailSaving{}, err
-			}
+		if err := config.DB.Model(&DetailSaving).Update("status", 2).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return models.DetailSaving{}, err
 		}
 	}
 	
@@ -87,6 +84,7 @@ func (dsr *DetailSavingRepositoryImpl) Create(savingInput models.DetailSavingInp
 
 	var createdDetailSaving models.DetailSaving = models.DetailSaving{
 		Value: 			savingInput.Value,
+		Status: 		1,
 		UserID:    		user.ID,
 		SavingID:    	savingInput.SavingID,
 		User: 			User,
@@ -134,6 +132,28 @@ func (dsr *DetailSavingRepositoryImpl) Update(savingInput models.DetailSavingInp
 
 	total := Saving.Value + savingInput.Value
 	if err := config.DB.Model(&Saving).Update("value", total).Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
+	if total >= Saving.Goal && detailSaving.Status == 1 {
+		exp := 10 + User.Exp
+		if err := config.DB.Model(&detailSaving).Update("status", 2).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+	} else if total <= Saving.Goal && detailSaving.Status == 2 {
+		exp := User.Exp - 10
+		if err := config.DB.Model(&detailSaving).Update("status", 1).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+	}
+
+	if err := config.DB.Preload("User").Where("id = ?", savingInput.SavingID).First(&Saving).Error; err != nil {
 		return models.DetailSaving{}, err
 	}
 
