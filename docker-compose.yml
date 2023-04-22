@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+  echo-notes-service:
+    build: .
+    ports:
+      - 1323:1323
+    restart: on-failure
