@@ -171,10 +171,15 @@ func (dsr *DetailSavingRepositoryImpl) Update(savingInput models.DetailSavingInp
 }
 
 func (dsr *DetailSavingRepositoryImpl) Delete(id, token string) error {
-	_, err := m.VerifyToken(token)
+	user, err := m.VerifyToken(token)
     if err != nil {
         return err
     }
+
+	var User models.User
+	if err := config.DB.Where("id = ?", user.ID).First(&User).Error; err != nil {
+		return err
+	}
 
 	detailSaving, err := dsr.GetByID(id, token)
 
@@ -186,6 +191,18 @@ func (dsr *DetailSavingRepositoryImpl) Delete(id, token string) error {
 	kurang := Saving.Value - detailSaving.Value
 	if err := config.DB.Model(&Saving).Update("value", kurang).Error; err != nil {
 		return err
+	}
+
+	if kurang >= Saving.Goal {
+		exp := 10 + User.Exp
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return err
+		}
+	} else if kurang <= Saving.Goal {
+		exp := User.Exp - 10
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return err
+		}
 	}
 
 	if err != nil {
