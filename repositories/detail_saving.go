@@ -58,13 +58,33 @@ func (dsr *DetailSavingRepositoryImpl) Create(savingInput models.DetailSavingInp
 		return models.DetailSaving{}, err
 	}
 
+	var DetailSaving models.DetailSaving
+	if err := config.DB.Preload("User").Preload("Saving").Where("saving_id = ?", savingInput.SavingID).First(&DetailSaving).Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
 	total := Saving.Value + savingInput.Value
 	if err := config.DB.Model(&Saving).Update("value", total).Error; err != nil {
 		return models.DetailSaving{}, err
 	}
 
+	if total >= Saving.Goal && DetailSaving.Status == 1 {
+		exp := 10 + User.Exp
+		if err := config.DB.Model(&DetailSaving).Update("status", 2).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+	}
+	
+	if err := config.DB.Preload("User").Where("id = ?", savingInput.SavingID).First(&Saving).Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
 	var createdDetailSaving models.DetailSaving = models.DetailSaving{
 		Value: 			savingInput.Value,
+		Status: 		1,
 		UserID:    		user.ID,
 		SavingID:    	savingInput.SavingID,
 		User: 			User,
@@ -115,6 +135,28 @@ func (dsr *DetailSavingRepositoryImpl) Update(savingInput models.DetailSavingInp
 		return models.DetailSaving{}, err
 	}
 
+	if total >= Saving.Goal && detailSaving.Status == 1 {
+		exp := 10 + User.Exp
+		if err := config.DB.Model(&detailSaving).Update("status", 2).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+	} else if total <= Saving.Goal && detailSaving.Status == 2 {
+		exp := User.Exp - 10
+		if err := config.DB.Model(&detailSaving).Update("status", 1).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return models.DetailSaving{}, err
+		}
+	}
+
+	if err := config.DB.Preload("User").Where("id = ?", savingInput.SavingID).First(&Saving).Error; err != nil {
+		return models.DetailSaving{}, err
+	}
+
 	detailSaving.Value = savingInput.Value
 	detailSaving.UserID = user.ID
 	detailSaving.SavingID = savingInput.SavingID
@@ -129,10 +171,15 @@ func (dsr *DetailSavingRepositoryImpl) Update(savingInput models.DetailSavingInp
 }
 
 func (dsr *DetailSavingRepositoryImpl) Delete(id, token string) error {
-	_, err := m.VerifyToken(token)
+	user, err := m.VerifyToken(token)
     if err != nil {
         return err
     }
+
+	var User models.User
+	if err := config.DB.Where("id = ?", user.ID).First(&User).Error; err != nil {
+		return err
+	}
 
 	detailSaving, err := dsr.GetByID(id, token)
 
@@ -144,6 +191,18 @@ func (dsr *DetailSavingRepositoryImpl) Delete(id, token string) error {
 	kurang := Saving.Value - detailSaving.Value
 	if err := config.DB.Model(&Saving).Update("value", kurang).Error; err != nil {
 		return err
+	}
+
+	if kurang >= Saving.Goal {
+		exp := 10 + User.Exp
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return err
+		}
+	} else if kurang <= Saving.Goal {
+		exp := User.Exp - 10
+		if err := config.DB.Model(&User).Update("exp", exp).Error; err != nil {
+			return err
+		}
 	}
 
 	if err != nil {
