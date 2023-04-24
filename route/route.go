@@ -24,6 +24,9 @@ func New() *echo.Echo {
 	eJwt := v1.Group("")
 	eJwt.Use(mid.JWT([]byte(utils.GetConfig("JWT_SECRET_KEY"))))
 
+	coffe := controllers.GetCoffeePrice
+	v1.GET("/coffee", coffe)
+
 	// Route / to handler function
 	user := controllers.InitUserController()
 	v1.POST("/users/login", user.Login)
