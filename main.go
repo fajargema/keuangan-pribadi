@@ -11,13 +11,30 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	echoSwagger "github.com/swaggo/echo-swagger"
+
+	_ "keuangan-pribadi/docs"
 )
 
 type operation func(ctx context.Context) error
 
+// @title Finance Report API
+// @version 1.0
+// @description This is a api for manage finance report.
+
+// @contact.name API Support
+// @contact.url https://www.fajargema.com
+// @contact.email fgemar72@gmail.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host http://13.214.213.55:1323
+// @BasePath /api/v1
 func main() {
 	e := route.New()
-
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	go func() {
 		if err := e.Start(":1323"); err != nil && err != http.ErrServerClosed {
 			e.Logger.Fatal("shutting down the server")

@@ -1,0 +1,20 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a api for manage finance report.",
+        "title": "Finance Report API",
+        "contact": {
+            "name": "API Support",
+            "url": "https://www.fajargema.com",
+            "email": "fgemar72@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "http://13.214.213.55:1323",
+    "basePath": "/api/v1",
+    "paths": {}
+}
