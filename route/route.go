@@ -41,6 +41,7 @@ func New() *echo.Echo {
 	eJwt.PUT("/categories/:id", category.Update)
 	eJwt.DELETE("/categories/:id", category.Delete)
 
+	
 	finance := controllers.InitFinanceController()
 	eJwt.GET("/finances", finance.GetAll)
 	eJwt.GET("/finances/:id", finance.GetByID)
