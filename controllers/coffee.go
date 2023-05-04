@@ -11,26 +11,17 @@ import (
 )
 
 type CurrencyRatesResponse struct {
-    Success   bool              `json:"success"`
-    Timestamp int64             `json:"timestamp"`
-    Base      string            `json:"base"`
-    Date      string            `json:"date"`
-    Rates     map[string]float64 `json:"rates"`
-}
-
-func GetCurrencyRates(c echo.Context) error {
-    resp, err := http.Get("https://api.apilayer.com/exchangerates_data/latest?symbols=idr&base=gbp")
-    if err != nil {
-        return c.JSON(http.StatusInternalServerError, nil)
-    }
-    defer resp.Body.Close()
-
-    var data CurrencyRatesResponse
-    if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-        return c.JSON(http.StatusInternalServerError, nil)
-    }
-
-    return c.JSON(http.StatusOK, data.Rates["IDR"])
+    RealtimeCurrencyExchangeRate struct {
+        FromCurrencyCode string `json:"1. From_Currency Code"`
+        FromCurrencyName string `json:"2. From_Currency Name"`
+        ToCurrencyCode   string `json:"3. To_Currency Code"`
+        ToCurrencyName   string `json:"4. To_Currency Name"`
+        ExchangeRate     string `json:"5. Exchange Rate"`
+        LastRefreshed    string `json:"6. Last Refreshed"`
+        TimeZone         string `json:"7. Time Zone"`
+        BidPrice         string `json:"8. Bid Price"`
+        AskPrice         string `json:"9. Ask Price"`
+    } `json:"Realtime Currency Exchange Rate"`
 }
 
 func GetCoffeePrice(c echo.Context) error {
@@ -50,7 +41,7 @@ func GetCoffeePrice(c echo.Context) error {
         return c.JSON(http.StatusInternalServerError, models.CoffeePriceResponse{})
     }
 
-	rpResp, _ := http.Get("https://api.apilayer.com/exchangerates_data/latest?symbols=idr&base=gbp")
+	rpResp, _ := http.Get("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=GBP&to_currency=IDR&apikey=R5KS7LRJO82IIQ55")
 	var rpData CurrencyRatesResponse
     if err := json.NewDecoder(rpResp.Body).Decode(&rpData); err != nil {
         return c.JSON(http.StatusInternalServerError, nil)
@@ -64,7 +55,8 @@ func GetCoffeePrice(c echo.Context) error {
         }
 
 		valueFloat, _ := strconv.ParseFloat(coffeePrice.Value, 64)
-		res := valueFloat * rpData.Rates["IDR"]
+		rp, _ := strconv.ParseFloat(rpData.RealtimeCurrencyExchangeRate.ExchangeRate, 64)
+		res := valueFloat * rp
 		ac := accounting.Accounting{Symbol: "Rp. ", Precision: 2, Thousand: ".", Decimal: ","}
 		
 		coffeePrice.Value = ac.FormatMoney(res)
