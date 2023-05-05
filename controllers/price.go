@@ -41,9 +41,9 @@ func GetCoffeePrice(c echo.Context) error {
         return c.JSON(http.StatusInternalServerError, models.CoffeePriceResponse{})
     }
 
-	rpResp, _ := http.Get("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=GBP&to_currency=IDR&apikey=R5KS7LRJO82IIQ55")
+	rateResp, _ := http.Get("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=GBP&to_currency=IDR&apikey=R5KS7LRJO82IIQ55")
 	var rpData CurrencyRatesResponse
-    if err := json.NewDecoder(rpResp.Body).Decode(&rpData); err != nil {
+    if err := json.NewDecoder(rateResp.Body).Decode(&rpData); err != nil {
         return c.JSON(http.StatusInternalServerError, nil)
     }
 
