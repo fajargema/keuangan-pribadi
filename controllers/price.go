@@ -57,9 +57,9 @@ func GetCoffeePrice(c echo.Context) error {
 		priceValueFloat, _ := strconv.ParseFloat(coffeePrice.Value, 64)
 		rp, _ := strconv.ParseFloat(rpData.RealtimeCurrencyExchangeRate.ExchangeRate, 64)
 		res := priceValueFloat * rp
-		ac := accounting.Accounting{Symbol: "Rp. ", Precision: 2, Thousand: ".", Decimal: ","}
+		formatRp := accounting.Accounting{Symbol: "Rp. ", Precision: 2, Thousand: ".", Decimal: ","}
 		
-		coffeePrice.Value = ac.FormatMoney(res)
+		coffeePrice.Value = formatRp.FormatMoney(res)
         coffeePrices = append(coffeePrices, coffeePrice)
     }
 
