@@ -13,6 +13,6 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd keuangan-pribadi
-            git pull origin master
+            git pull origin development
             go test -v ./...
             docker-compose down && docker-compose up --build -d
