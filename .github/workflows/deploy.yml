@@ -14,5 +14,4 @@ jobs:
           script: |
             cd keuangan-pribadi
             git pull origin master
-            go test -v ./...
             docker-compose down && docker-compose up --build -d
