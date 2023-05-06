@@ -41,9 +41,9 @@ func GetCoffeePrice(c echo.Context) error {
         return c.JSON(http.StatusInternalServerError, models.CoffeePriceResponse{})
     }
 
-	rpResp, _ := http.Get("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=GBP&to_currency=IDR&apikey=R5KS7LRJO82IIQ55")
+	rateResp, _ := http.Get("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=GBP&to_currency=IDR&apikey=R5KS7LRJO82IIQ55")
 	var rpData CurrencyRatesResponse
-    if err := json.NewDecoder(rpResp.Body).Decode(&rpData); err != nil {
+    if err := json.NewDecoder(rateResp.Body).Decode(&rpData); err != nil {
         return c.JSON(http.StatusInternalServerError, nil)
     }
 
@@ -54,12 +54,12 @@ func GetCoffeePrice(c echo.Context) error {
             return c.JSON(http.StatusInternalServerError, models.CoffeePriceResponse{})
         }
 
-		valueFloat, _ := strconv.ParseFloat(coffeePrice.Value, 64)
+		priceValueFloat, _ := strconv.ParseFloat(coffeePrice.Value, 64)
 		rp, _ := strconv.ParseFloat(rpData.RealtimeCurrencyExchangeRate.ExchangeRate, 64)
-		res := valueFloat * rp
-		ac := accounting.Accounting{Symbol: "Rp. ", Precision: 2, Thousand: ".", Decimal: ","}
+		res := priceValueFloat * rp
+		formatRp := accounting.Accounting{Symbol: "Rp. ", Precision: 2, Thousand: ".", Decimal: ","}
 		
-		coffeePrice.Value = ac.FormatMoney(res)
+		coffeePrice.Value = formatRp.FormatMoney(res)
         coffeePrices = append(coffeePrices, coffeePrice)
     }
 
