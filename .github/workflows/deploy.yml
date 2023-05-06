@@ -13,6 +13,7 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd keuangan-pribadi
+            git config --system --add safe.directory '*'
             git pull origin master
             go test -v ./...
             docker-compose down && docker-compose up --build -d
